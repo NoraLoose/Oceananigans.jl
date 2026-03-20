@@ -70,6 +70,7 @@ function TripolarGrid(arch = CPU(), FT::DataType = Float64;
                       z = (0, 1),
                       north_poles_latitude = 55,
                       first_pole_longitude = 70)  # second pole is at longitude `first_pole_longitude + 180ᵒ`
+    
 
     # TODO: Change a couple of allocations here and there to be able 
     # to construct the grid on the GPU. This is not a huge problem as
@@ -92,6 +93,8 @@ function TripolarGrid(arch = CPU(), FT::DataType = Float64;
     # but for the φ coordinate we need to remove one point at the north
     # because the the north pole is a `Center`point, not on `Face` point...
     topology  = (Periodic, RightConnected, Bounded) 
+    TZ = topology[3]
+    z = validate_dimension_specification(TZ, z, :z, Nz, FT)
 
     Lx, λᶠᵃᵃ, λᶜᵃᵃ, Δλᶠᵃᵃ, Δλᶜᵃᵃ = generate_coordinate(FT, topology, size, halo, longitude, :longitude, 1, CPU())
     Lz, z                        = generate_coordinate(FT, topology, size, halo, z,         :z,         3, CPU())
